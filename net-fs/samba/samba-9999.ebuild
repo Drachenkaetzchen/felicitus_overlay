@@ -48,7 +48,7 @@ pkg_setup() {
 		BINPROGS="${BINPROGS} bin/smbclient bin/nmblookup bin/ntlm_auth"
 	fi
 	if use server ; then
-		BINPROGS="${BINPROGS} scripting/bin/testparm bin/smbtorture"
+		BINPROGS="${BINPROGS} source4/scripting/bin/testparm bin/smbtorture"
 	fi
 	if use tools ; then
 		# Should be in sys-libs/ldb, but there's no ldb release yet
