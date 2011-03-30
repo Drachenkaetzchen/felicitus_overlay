@@ -39,16 +39,13 @@ pkg_setup() {
 	if use server ; then
 		SBINPROGS="${SBINPROGS} bin/samba"
 	fi
-	if use client ; then
-		SBINPROGS="${SBINPROGS} bin/mount.cifs bin/umount.cifs"
-	fi
 
 	BINPROGS=""
 	if use client ; then
-		BINPROGS="${BINPROGS} bin/smbclient bin/net bin/nmblookup bin/ntlm_auth"
+		BINPROGS="${BINPROGS} bin/smbclient bin/nmblookup bin/ntlm_auth"
 	fi
 	if use server ; then
-		BINPROGS="${BINPROGS} bin/testparm bin/smbtorture"
+		BINPROGS="${BINPROGS} scripting/bin/testparm bin/smbtorture"
 	fi
 	if use tools ; then
 		# Should be in sys-libs/ldb, but there's no ldb release yet
@@ -74,6 +71,7 @@ src_configure() {
 		$(use_enable netapi) \
 		--enable-socket-wrapper \
 		--enable-nss-wrapper \
+		--prefix=/usr
 		--with-modulesdir=/usr/lib/samba/modules \
 		--with-privatedir=/var/lib/samba/private \
 		--with-ntp-signd-socket-dir=/var/run/samba \
@@ -95,11 +93,6 @@ src_compile() {
 src_install() {
 	# install libs
 	emake install DESTDIR="${D}" || die "emake installib failed"
-
-	# compile python
-	if use python ; then
-		emake installpython DESTDIR="${D}" || die "emake installpython failed"
-	fi
 
 	# binaries
 	dosbin ${SBINPROGS} || die "installing SBINPROGS failed"
