@@ -4,14 +4,17 @@
 
 EAPI="2"
 
-inherit confutils multilib
+EGIT_REPO_URI="git://git.samba.org/samba.git"
+EGIT_BRANCH="master"
+
+inherit confutils git multilib
 
 MY_PV="${PV/_alpha/alpha}"
 MY_P="${PN}-${MY_PV}"
 
 DESCRIPTION="Samba Server component"
 HOMEPAGE="http://www.samba.org/"
-SRC_URI="mirror://samba/samba4/${MY_P}.tar.gz"
+SRC_URI=""
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
@@ -52,6 +55,8 @@ pkg_setup() {
 		BINPROGS="${BINPROGS} bin/ldbedit bin/ldbsearch bin/ldbadd bin/ldbdel bin/ldbmodify bin/ldbrename"
 	fi
 	confutils_use_depend_all server python
+
+	#epatch ${FILESDIR}/${P}"-installdir.patch"
 }
 
 src_configure() {
@@ -66,9 +71,9 @@ src_configure() {
 		$(use_enable gnutls) \
 		--enable-socket-wrapper \
 		--enable-nss-wrapper \
+		--with-privatelibdir=/usr/$(get_libdir) \
 		--with-modulesdir=/usr/lib/samba/modules \
 		--with-privatedir=/var/lib/samba/private \
-		--with-privatelibdir=/usr/$(get_libdir)
 		--with-ntp-signd-socket-dir=/var/run/samba \
 		--with-lockdir=/var/cache/samba \
 		--with-piddir=/var/run/samba 
