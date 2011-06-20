@@ -5,7 +5,7 @@
 EAPI="2"
 
 EGIT_REPO_URI="git://code.stapelberg.de/i3"
-EGIT_BRANCH="next"
+EGIT_BRANCH="master"
 
 inherit git multilib
 
@@ -32,7 +32,7 @@ DEPEND="${RDEPEND}
 	sys-devel/flex"
 
 src_prepare() {
-	epatch "${FILESDIR}"/0001-Remove-_NET_WORKAREA-to-allow-qt-4.6.0-display-menus.patch
+	#epatch "${FILESDIR}"/0001-Remove-_NET_WORKAREA-to-allow-qt-4.6.0-display-menus.patch
 	use debug || { sed -i -e "s:DEBUG=1:DEBUG=0:" common.mk || die "sed die - debug" ; }
 	sed -i \
 		-e "s:/usr/local/include:/usr/include:" \
