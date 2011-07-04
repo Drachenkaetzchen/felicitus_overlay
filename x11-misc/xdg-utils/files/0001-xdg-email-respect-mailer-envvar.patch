@@ -1,0 +1,51 @@
+Description: Add $MAILER support to xdg-email.
+Bug-Debian: http://bugs.debian.org/574131
+Author: Per Olofsson <pelle@debian.org>
+
+--- a/scripts/xdg-email
++++ b/scripts/xdg-email
+@@ -356,7 +356,8 @@ fi
+ 
+ detectDE()
+ {
+-    if [ x"$KDE_FULL_SESSION" = x"true" ]; then DE=kde;
++    if [ x"$MAILER" != x"" ]; then DE=envvar;
++    elif [ x"$KDE_FULL_SESSION" = x"true" ]; then DE=kde;
+     elif [ x"$GNOME_DESKTOP_SESSION_ID" != x"" ]; then DE=gnome;
+     elif `dbus-send --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.GetNameOwner string:org.gnome.SessionManager > /dev/null 2>&1` ; then DE=gnome;
+     elif xprop -root _DT_SAVE_MODE 2> /dev/null | grep ' = \"xfce4\"$' >/dev/null 2>&1; then DE=xfce;
+@@ -509,6 +510,23 @@ open_xfce()
+     fi
+ }
+ 
++open_envvar()
++{
++    local OLDIFS="$IFS"
++    IFS=:
++    for i in $MAILER; do
++	IFS="$OLDIFS"
++
++	eval "$i" '"$1"'
++
++	if [ $? -eq 0 ]; then
++	    exit_success
++	fi
++    done
++
++    exit_failure_operation_failed
++}
++
+ open_generic()
+ {
+     IFS=":"
+@@ -704,6 +722,10 @@ if [ x"$BROWSER" = x"" ]; then
+ fi
+ 
+ case "$DE" in
++    envvar)
++    open_envvar "${mailto}"
++    ;;
++
+     kde)
+     open_kde "${mailto}"
+     ;;
